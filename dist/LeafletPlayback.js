@@ -1,3 +1,11 @@
+/* 9/1/2017 RDK : have ammended library to change the date output.
+                have commented out calls to the time elements have replaced date function
+                a call to toUTCString.
+                Added to bind label: {noHide: true}
+
+    7/4/2019 RDK: added support for bind ToolTip as new in leaflet >1.0, replaces Label
+                
+*/
 // UMD initialization to work with CommonJS, AMD and basic browser script include
 (function (factory) {
 	var L;
@@ -22,7 +30,7 @@ L.Playback.Util = L.Class.extend({
   statics: {
 
     DateStr: function(time) {
-      return new Date(time).toDateString();
+      return new Date(time).toUTCString();
     },
 
     TimeStr: function(time) {
@@ -109,9 +117,13 @@ L.Playback.MoveableMarker = L.Marker.extend({
         	
         if(options.labels)
         {
-            if(this.bindLabel)
+            if(this.bindTooltip)
             {
-                this.bindLabel(this.getPopupContent());
+                this.bindTooltip(this.getPopupContent(), {permanent: true, direction:'right'});
+            }
+            else if(this.bindLabel)
+            {
+                this.bindLabel(this.getPopupContent(), {noHide: true});
             }
             else
             {
@@ -752,7 +764,7 @@ L.Playback.DateControl = L.Control.extend({
     options : {
         position : 'bottomleft',
         dateFormatFn: L.Playback.Util.DateStr,
-        timeFormatFn: L.Playback.Util.TimeStr
+        //timeFormatFn: L.Playback.Util.TimeStr
     },
 
     initialize : function (playback, options) {
@@ -771,15 +783,15 @@ L.Playback.DateControl = L.Control.extend({
 
         // date time
         this._date = L.DomUtil.create('p', '', datetime);
-        this._time = L.DomUtil.create('p', '', datetime);
+        //this._time = L.DomUtil.create('p', '', datetime);
 
         this._date.innerHTML = this.options.dateFormatFn(time);
-        this._time.innerHTML = this.options.timeFormatFn(time);
+        //this._time.innerHTML = this.options.timeFormatFn(time);
 
         // setup callback
         playback.addCallback(function (ms) {
             self._date.innerHTML = self.options.dateFormatFn(ms);
-            self._time.innerHTML = self.options.timeFormatFn(ms);
+            //self._time.innerHTML = self.options.timeFormatFn(ms);
         });
 
         return this._container;
@@ -788,7 +800,7 @@ L.Playback.DateControl = L.Control.extend({
     
 L.Playback.PlayControl = L.Control.extend({
     options : {
-        position : 'bottomright'
+        position : 'bottomleft'
     },
 
     initialize : function (playback) {

@@ -822,14 +822,8 @@ L.Playback.PlayControl = L.Control.extend({
         this._button.innerHTML = 'Play';
 
 
-        var stop = L.DomEvent.stopPropagation;
-
-        L.DomEvent
-        .on(this._button, 'click', stop)
-        .on(this._button, 'mousedown', stop)
-        .on(this._button, 'dblclick', stop)
-        .on(this._button, 'click', L.DomEvent.preventDefault)
-        .on(this._button, 'click', play, this);
+        L.DomEvent.on(this._button, 'click', play, this);
+	L.DomEvent.disableClickPropagation(this._container);
         
         function play(){
             if (playback.isPlaying()) {
@@ -868,17 +862,11 @@ L.Playback.SliderControl = L.Control.extend({
         this._slider.max = playback.getEndTime();
         this._slider.value = playback.getTime();
 
-        var stop = L.DomEvent.stopPropagation;
-
         L.DomEvent
-        .on(this._slider, 'click', stop)
-        .on(this._slider, 'mousedown', stop)
-        .on(this._slider, 'dblclick', stop)
-        .on(this._slider, 'click', L.DomEvent.preventDefault)
-        //.on(this._slider, 'mousemove', L.DomEvent.preventDefault)
         .on(this._slider, 'change', onSliderChange, this)
         .on(this._slider, 'mousemove', onSliderChange, this);           
 
+	L.DomEvent.disableClickPropagation(this._container);
 
         function onSliderChange(e) {
             var val = Number(e.target.value);
